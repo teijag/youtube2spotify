@@ -10,8 +10,11 @@ import youtube_dl
 class CreatePlaylist():
 
     def __init__(self):
+<<<<<<< Updated upstream
         self.user_id = secrets.get_spotify_id()
         self.spotify_secret = secrets.get_spotify_secret()
+=======
+>>>>>>> Stashed changes
         self.youtube_client = self.get_youtube_client()
         self.all_song_info = {}
 
@@ -33,20 +36,34 @@ class CreatePlaylist():
         return googleapiclient.discovery.build(API_SERVICE_NAME, API_VERSION, credentials=credentials)
 
 
+<<<<<<< Updated upstream
     # step 2. get all liked video from youtube account
     def get_liked_videos(self):
         request = self.youtube_client.videos().list(
             part = "snippet,contentDetails,statistics",
             myRating='like'
+=======
+    # step 2. get videos from specified youtube playlist
+    def get_videos_from_playlist(self):
+        print ("getting videos from playlist")
+
+        request = self.youtube_client.playlistItems().list(
+            part = "snippet,contentDetails",
+            playlistId = secrets.get_youtube_playlist(),
+            maxResults = 20
+>>>>>>> Stashed changes
         )
         response = request.execute()
 
-        # loop through all the liked videos and add information to all_song_info
+        # loop through all the videos and add information to all_song_info
         for item in response["items"]:
             video_title = item["snippet"]["title"]
-            youtube_url = "https://www.youtube.com/watch?v={}".format(item["id"])
+            youtube_url = "https://www.youtube.com/watch?v={}".format(item["contentDetails"]["videoId"])
 
-            video = youtube_dl.YoutubeDL({}).extract_info(youtube_url,download = False)
+            try:
+                video = youtube_dl.YoutubeDL({}).extract_info(youtube_url,download = False)
+            except: # video not available
+                continue
             song_name = video["track"]
             artist = video["artist"]
 
@@ -63,7 +80,7 @@ class CreatePlaylist():
 
         request_body = json.dumps({
             "name": "from Youtube",
-            "description": "liked songs from youtubeeee",
+            "description": "songs from youtubeeee",
             "public": False
         })
 
@@ -101,7 +118,7 @@ class CreatePlaylist():
     # step 5. add the song to a new spotify playlist
     def add_to_playlist(self):
         # populate song_info
-        self.get_liked_videos()
+        self.get_videos_from_playlist()
 
         # collect uri
         uri = []

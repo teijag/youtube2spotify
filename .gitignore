@@ -3,3 +3,7 @@ secrets.py
 *.xml
 client_secret_.json
 *.iml
+__pycache__/secrets.cpython-36.pyc
+__pycache__/secrets.cpython-36.pyc
+__pycache__/secrets.cpython-37.pyc
+*.pyc
